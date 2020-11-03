@@ -2,4 +2,4 @@
 # two versus one
 
 x = 1 + 1
-z <- 5 + 5
+t <- 2 + 1
