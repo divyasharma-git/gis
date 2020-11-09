@@ -1,0 +1,86 @@
+---
+title: "Cycle Project_draft"
+author: "Divya Sharma"
+date: "11/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+
+# Install packages that may not already be available in your
+# installation of R.
+
+
+#install.packages("devtools")
+#install.packages("mapview")
+
+
+# Load libraries, and download TFL data on Cycling Infrastructure
+# Download IMD data from below link, save to proj_data folder
+# https://data-communities.opendata.arcgis.com/datasets/indices-of-multiple-deprivation-imd-2019
+
+library(devtools)
+library(CycleInfraLnd)
+library(dplyr)
+library(sf)
+library(leaflet)
+library(tmap)
+library(mapview)
+library(tidyverse)
+library(here)
+
+devtools::install_github("PublicHealthDataGeek/CycleInfraLnd")
+
+
+# Set CLT equal to cycle_lane_track data from TFL
+# data is multilinestring, geographic CRS: WGS 84
+# Set IMD equal to deprivation index data, a shape file
+
+
+CLT <- get_cid_lines(type = "cycle_lane_track")
+IMD <- st_read(here::here("proj_data", "IMD_2019","IMD_2019.shp"))
+
+# Create new object that selects types of cycle lanes: 
+# segregated, partially segregated, stepped lane
+
+segreg_cl <- CLT %>%
+  filter(CLT_SEGREG == TRUE | CLT_STEPP == TRUE |
+         CLT_PARSEG == TRUE)
+
+# Create imd_map dataframe with only London Boroughs
+imd_map <- IMD %>%
+  filter(str_detect(LADcd, "^E09"))
+
+tmap_mode("plot")
+
+# map of deprivation index relative to cycling infrastructure
+imd_cycle <- tm_shape(imd_map) +
+  tm_fill("IMDScore",
+          style="fisher",
+          palette="GnBu",
+          #legend.hist = TRUE,
+          title = "IMD Score") +
+  tm_layout(title = "Cycling Lanes v. Deprivation Index",
+            title.size = 1.5,
+            title.color = "azure4",
+            title.position = c("left", "top")) +
+  tm_legend(title.size=1.1,
+            text.size = 0.9,
+            #frame = "grey",
+            position = c("right", "bottom")) +
+  tm_shape(segreg_cl) +
+    tm_lines(col = 'red', lwd = 5)
+
+
+
+imd_cycle
+```
+
+
+
+
