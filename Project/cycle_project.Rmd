@@ -60,23 +60,21 @@ tmap_mode("plot")
 
 # map of deprivation index relative to cycling infrastructure
 imd_cycle <- tm_shape(imd_map) +
-  tm_fill("IMDScore",
+  tm_fill("IMDRank0",
           style="fisher",
           palette="GnBu",
           #legend.hist = TRUE,
-          title = "IMD Score") +
-  tm_layout(title = "Cycling Lanes v. Deprivation Index",
+          title = "IMD Rank") +
+  tm_layout(title = "Cycling Lanes v. Deprivation Rank (1 is most deprived)",
             title.size = 1.5,
             title.color = "azure4",
             title.position = c("left", "top")) +
   tm_legend(title.size=1.1,
-            text.size = 0.9,
+            text.size = 0.8,
             #frame = "grey",
-            position = c("right", "bottom")) +
+            position = c(1,0)) +
   tm_shape(segreg_cl) +
     tm_lines(col = 'red', lwd = 5)
-
-
 
 imd_cycle
 ```
